@@ -67,6 +67,7 @@ async function main() {
             }
             for await (const runs of client.paginate.iterator(endpoint, params)) {
                 const run = runs.data.find(r => {
+                    console.log(r)
                     let isMatch = true
                     if (commit) {
                         isMatch = isMatch && (r.head_sha == commit)
