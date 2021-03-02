@@ -67,6 +67,7 @@ async function main() {
                 status: workflow_conclusion,
             }
             for await (const runs of client.paginate.iterator(endpoint, params)) {
+		console.log(runs);
                 const run = runs.data.find(r => {
                     if (commit) {
                         return r.head_sha == commit
