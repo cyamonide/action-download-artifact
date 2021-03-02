@@ -58,20 +58,23 @@ async function main() {
         }
 
         if (!runID) {
-            const endpoint = "GET /repos/:owner/:repo/actions/workflows/:id/runs?status=:status&branch=:branch"
+            const endpoint = "GET /repos/:owner/:repo/actions/workflows/:id/runs?branch=:branch"
             const params = {
                 owner: owner,
                 repo: repo,
                 id: workflow,
                 branch: branch,
-                status: workflow_conclusion,
             }
             for await (const runs of client.paginate.iterator(endpoint, params)) {
                 const run = runs.data.find(r => {
+                    let isMatch = true
                     if (commit) {
-                        return r.head_sha == commit
+                        isMatch = isMatch && (r.head_sha == commit)
                     }
-                    return true
+                    if (workflow_conclusion) {
+                        isMatch = isMatch && (r.status == workflow_conclusion || r.conclusion == workflow_conclusion)
+                    }
+                    return isMatch
                 })
 
                 if (run) {
